@@ -1,6 +1,6 @@
 {
   "name": "ProNet Bridge",
-  "version": "1.5",
+  "version": "1.6",
   "slug": "pronet_bridge",
   "description": "ProNet WebSocket to MQTT Bridge",
   "startup": "services",
