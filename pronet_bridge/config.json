@@ -1,6 +1,6 @@
 {
   "name": "ProNet Bridge",
-  "version": "1.4",
+  "version": "1.5",
   "slug": "pronet_bridge",
   "description": "ProNet WebSocket to MQTT Bridge",
   "startup": "services",
@@ -8,8 +8,8 @@
   "arch": ["aarch64", "armv7", "amd64"],
   "options": {
     "ws_url": "ws://192.168.1.218/2416975873",
-    "http_user": "",
-    "http_pass": "",
+    "http_user": "sentiotec user",
+    "http_pass": "sentiotec pass",
     "mqtt_host": "core-mosquitto",
     "mqtt_user": "",
     "mqtt_pass": ""
