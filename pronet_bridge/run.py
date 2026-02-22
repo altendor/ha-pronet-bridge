@@ -6,9 +6,11 @@ import paho.mqtt.client as mqtt
 
 OPTIONS_PATH = "/data/options.json"
 
+
 def load_options():
     with open(OPTIONS_PATH, "r", encoding="utf-8") as f:
         return json.load(f)
+
 
 opts = load_options()
 
@@ -29,14 +31,23 @@ ADDR_MAP = {
     "183/0/14": ("pronet/steam/humidity_actual", float),
 }
 
+
 def connect_mqtt():
+    if not MQTT_HOST:
+        raise RuntimeError("mqtt_host is empty in add-on configuration.")
+
     client = mqtt.Client()
+
     if MQTT_USER:
         client.username_pw_set(MQTT_USER, MQTT_PASS)
+
     client.connect(MQTT_HOST, 1883, 60)
     client.loop_start()
+
     print(f"[OK] MQTT connected to {MQTT_HOST}:1883")
+
     return client
+
 
 def ws_headers():
     if HTTP_USER:
@@ -44,19 +55,26 @@ def ws_headers():
         return [f"Authorization: Basic {token}"]
     return []
 
+
 mqttc = connect_mqtt()
 
 while True:
     try:
         if not WS_URL:
-            raise RuntimeError("ws_url is empty. Please set it in the add-on configuration.")
+            raise RuntimeError("ws_url is empty in add-on configuration.")
 
-        print(f"[INFO] Connecting WS: {WS_URL}")
+        print(f"[INFO] Connecting WebSocket: {WS_URL}")
+
         ws = websocket.create_connection(WS_URL, header=ws_headers())
-        print("[OK] WS connected")
+
+        print("[OK] WebSocket connected")
 
         while True:
             raw = ws.recv()
+
+            if not raw:
+                continue
+
             msg = json.loads(raw)
 
             addr = msg.get("addr")
@@ -64,12 +82,14 @@ while True:
 
             if addr in ADDR_MAP:
                 topic, cast = ADDR_MAP[addr]
+
                 try:
                     val = cast(val)
                 except Exception:
                     continue
+
                 mqttc.publish(topic, str(val), retain=True)
 
     except Exception as e:
-        print(f"[ERR] {repr(e)}")
+        print(f"[ERROR] {repr(e)}")
         time.sleep(5)
