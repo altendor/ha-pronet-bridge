@@ -40,7 +40,7 @@ def connect_mqtt():
     if not MQTT_HOST:
         raise RuntimeError("mqtt_host is empty. Set mqtt_host to 'core-mosquitto' in add-on config.")
 
-    client = mqtt.Client()
+    client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
     if MQTT_USER:
         client.username_pw_set(MQTT_USER, MQTT_PASS)
 
